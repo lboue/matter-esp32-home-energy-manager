@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LCD_DISPLAY_H
+#define LCD_DISPLAY_H
 
 #include "esp_err.h"
 #include "esp_lcd_types.h"

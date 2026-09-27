@@ -5,7 +5,7 @@ idf_component_register(SRCS
         "matter_controller.cpp"
         "managers/device_manager.cpp"
         "managers/node_manager.cpp"
-        "sd_card.c"
+        # "sd_card.c"  # TODO: adapt to SPI-based SD for Waveshare (uses SDMMC API for P4 DevKit)
         "power_logger.c"
         "node_power_logger.cpp"
         "value_cache.cpp"
@@ -18,7 +18,7 @@ idf_component_register(SRCS
         "commands/pairing_command.cpp"
     INCLUDE_DIRS "."
     PRIV_INCLUDE_DIRS  "." "${ESP_MATTER_PATH}/examples/common/utils"
-    PRIV_REQUIRES fatfs sdmmc driver json esp_eth ethernet_init nvs_flash button esp_matter esp_matter_controller esp_http_server esp_http_client lwip lcd_display touch_input
+    PRIV_REQUIRES driver cjson esp_eth ethernet_init nvs_flash button esp_matter esp_matter_controller esp_http_server esp_http_client lwip lcd_display touch_input
     LDFRAGMENTS "linker.lf"
 )
 

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BOARD_CONFIG_WAVESHARE_ESP32_S3_TOUCH_LCD_4_3_H
+#define BOARD_CONFIG_WAVESHARE_ESP32_S3_TOUCH_LCD_4_3_H
 
 #include "driver/gpio.h"
 #include "driver/spi_master.h"

@@ -48,6 +48,9 @@ idf.py flash -p /dev/ttyUSB0 monitor
 - 8 MB Flash
 - 2.7 MB SRAM + SPIRAM
 
+⚠️ **IMPORTANT FLASH SIZE NOTE:**
+The Waveshare ESP32-S3-Touch-LCD-4.3 documentation claims 16MB flash, but the actual hardware has **8MB**. The firmware is configured for 8MB (`CONFIG_ESPTOOLPY_FLASHSIZE_8MB`). Do not change this to 16MB unless you have verified your board actually has 16MB flash using `esptool flash_id`.
+
 See [firmware/boards/README.md](boards/README.md) for board-specific details.
 
 ## Switching Between Boards

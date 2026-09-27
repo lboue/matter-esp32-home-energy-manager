@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TOUCH_INPUT_H
+#define TOUCH_INPUT_H
 
 #include "esp_err.h"
 #include "driver/i2c.h"

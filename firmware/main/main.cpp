@@ -211,7 +211,8 @@ extern "C" void app_main(void)
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    ESP_ERROR_CHECK(sd_card_init());
+    // TODO: SD card support for Waveshare (currently SDMMC API for P4 only)
+    // ESP_ERROR_CHECK(sd_card_init());
 
     ESP_ERROR_CHECK(node_manager_init());
     ESP_ERROR_CHECK(device_manager_init());

@@ -1,7 +1,10 @@
 #include "touch_input.h"
 #include "esp_log.h"
+#include "esp_check.h"
 #include "driver/i2c.h"
 #include "driver/gpio.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 #ifdef CONFIG_IDF_TARGET_ESP32S3
 #include "boards/waveshare_esp32_s3_touch_lcd_4_3.h"
@@ -74,8 +77,14 @@ esp_err_t touch_input_read(touch_input_t *touch, touch_event_t *event)
         return ESP_ERR_INVALID_ARG;
     }
 
-    uint8_t data[5];
-    i2c_master_read_from_slave(touch->i2c_port, touch->i2c_addr, data, sizeof(data));
+    uint8_t data[5] = {0};
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    i2c_master_start(cmd);
+    i2c_master_write_byte(cmd, (touch->i2c_addr << 1) | 0x01, true);
+    i2c_master_read(cmd, data, sizeof(data), I2C_MASTER_LAST_NACK);
+    i2c_master_stop(cmd);
+    ESP_RETURN_ON_ERROR(i2c_master_cmd_begin(touch->i2c_port, cmd, pdMS_TO_TICKS(1000)), TAG, "Failed to read from touch controller");
+    i2c_cmd_link_delete(cmd);
 
     if (data[0] & 0x80) {
         event->pressed = 1;

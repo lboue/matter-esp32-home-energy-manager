@@ -1,9 +1,13 @@
 #include "lcd_display.h"
 #include "esp_log.h"
+#include "esp_check.h"
+#include "string.h"
+#include "stdlib.h"
 #include "driver/spi_master.h"
 #include "driver/gpio.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_vendor.h"
+#include "esp_lcd_panel_ops.h"
 
 #ifdef CONFIG_IDF_TARGET_ESP32S3
 #include "boards/waveshare_esp32_s3_touch_lcd_4_3.h"
@@ -43,14 +47,10 @@ esp_err_t lcd_display_init(lcd_display_t *display)
     esp_lcd_panel_handle_t panel_handle = NULL;
     esp_lcd_panel_dev_config_t panel_config = {
         .reset_gpio_num = LCD_RST_GPIO,
-        .rgb_endian = LCD_RGB_ENDIAN_BGR,
         .bits_per_pixel = 16,
     };
 
-    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_st7262(io_handle, &panel_config, &panel_handle), TAG, "Failed to create panel");
-    ESP_RETURN_ON_ERROR(esp_lcd_panel_reset(panel_handle), TAG, "Failed to reset panel");
-    ESP_RETURN_ON_ERROR(esp_lcd_panel_init(panel_handle), TAG, "Failed to initialize panel");
-    ESP_RETURN_ON_ERROR(esp_lcd_panel_disp_on_off(panel_handle, true), TAG, "Failed to turn on display");
+    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_st7789(io_handle, &panel_config, &panel_handle), TAG, "Failed to create panel");
 
     display->panel = panel_handle;
 
@@ -75,10 +75,11 @@ esp_err_t lcd_display_init(lcd_display_t *display)
 esp_err_t lcd_display_deinit(lcd_display_t *display)
 {
 #ifdef CONFIG_IDF_TARGET_ESP32S3
-    if (display->panel) {
-        ESP_RETURN_ON_ERROR(esp_lcd_panel_del(display->panel), TAG, "Failed to delete panel");
+    if (display && display->panel) {
+        esp_lcd_panel_del(display->panel);
     }
-    return spi_bus_free(LCD_HOST);
+    spi_bus_free(LCD_HOST);
+    return ESP_OK;
 #else
     return ESP_ERR_NOT_SUPPORTED;
 #endif
@@ -100,7 +101,7 @@ esp_err_t lcd_display_set_brightness(uint8_t brightness)
 esp_err_t lcd_display_clear(lcd_display_t *display)
 {
 #ifdef CONFIG_IDF_TARGET_ESP32S3
-    if (!display->panel) {
+    if (!display || !display->panel) {
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -112,7 +113,7 @@ esp_err_t lcd_display_clear(lcd_display_t *display)
     memset(color, 0, LCD_WIDTH * sizeof(uint16_t));
 
     for (int y = 0; y < LCD_HEIGHT; y++) {
-        ESP_RETURN_ON_ERROR(esp_lcd_panel_draw_bitmap(display->panel, 0, y, LCD_WIDTH, y + 1, color), TAG, "Failed to clear display");
+        esp_lcd_panel_draw_bitmap(display->panel, 0, y, LCD_WIDTH, y + 1, color);
     }
 
     free(color);

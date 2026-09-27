@@ -30,7 +30,10 @@ CONFIG_ENABLE_ROUTE_HOOK=n
 # Without this, the CHIP task's static stack buffer lands outside the LP SRAM range
 # that esp_ptr_byte_accessible considers valid, causing xTaskCreateStaticPinnedToCore
 # to assert at startup.
+# Waveshare ESP32-S3-Touch-LCD-4.3 uses 8MB MCN8R8 PSRAM (Octa-SPI capable)
 CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_TYPE_AUTO=y
 CONFIG_SPIRAM_USE_MALLOC=y
 
 # Increase stack sizes for Matter
